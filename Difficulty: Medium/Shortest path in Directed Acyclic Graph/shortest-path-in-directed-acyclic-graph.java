@@ -1,15 +1,14 @@
 // User function Template for Java
 class Solution {
     class Pair{
-        int dest;
+        int vertex;
         int weight;
         
-        Pair(int dest, int weight){
-            this.dest = dest;
+        Pair(int vertex,int weight){
+            this.vertex = vertex;
             this.weight = weight;
         }
     }
-
     public int[] shortestPath(int V, int E, int[][] edges) {
         // Code here
         ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
@@ -23,41 +22,41 @@ class Solution {
             
             adj.get(u).add(new Pair(v,wt));
         }
+        
         int[] visited = new int[V];
         Stack<Integer> st = new Stack<>();
+        
         for(int i = 0; i < V; i++){
-            if(visited[i] == 0)
-            dfs(i,visited,st,adj);
+            if(visited[i] == 0){
+                dfs(i,visited,st,adj);
+            }
         }
-        
-        int[] distance = new int[V];
-        
-        for(int i = 0; i < V; i++) distance[i] = (int)1e9;
-        distance[0] = 0;
+        int[] dist = new int[V];
+        for(int i = 0; i < V; i++) dist[i] = (int)1e9;
+        dist[0] = 0;
         
         while(!st.isEmpty()){
             int node = st.pop();
             
-            if(distance[node] != (int)1e9){
-                for(Pair neighbor : adj.get(node)){
-                    if(distance[node] + neighbor.weight < distance[neighbor.dest]){
-                        distance[neighbor.dest] = distance[node] + neighbor.weight;
-                    }
+            for(Pair neighbor : adj.get(node)){
+                if(dist[node] + neighbor.weight < dist[neighbor.vertex]){
+                    dist[neighbor.vertex] = dist[node] + neighbor.weight;
                 }
             }
         }
         for(int i = 0; i < V; i++){
-            if(distance[i] == (int)1e9) distance[i] = -1;
+            if(dist[i] == (int)1e9) dist[i] = -1;
         }
-        return distance;
+        return dist;
     }
     
     public void dfs(int node, int[] visited, Stack<Integer> st, ArrayList<ArrayList<Pair>> adj){
         visited[node] = 1;
         
         for(Pair neighbor : adj.get(node)){
-            if(visited[neighbor.dest] == 0)
-            dfs(neighbor.dest,visited,st,adj);
+            if(visited[neighbor.vertex] == 0){
+                dfs(neighbor.vertex,visited,st,adj);
+            }
         }
         st.push(node);
     }
