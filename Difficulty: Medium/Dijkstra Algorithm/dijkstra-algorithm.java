@@ -1,48 +1,48 @@
 class Solution {
     class Pair{
-        int node;
+        int vertex;
         int distance;
         
-        Pair(int node, int distance){
-            this.node = node;
+        Pair(int vertex, int distance){
+            this.vertex = vertex;
             this.distance = distance;
         }
     }
+    
     public int[] dijkstra(int V, int[][] edges, int src) {
         // code here
-        ArrayList<ArrayList<Pair>> list = new ArrayList<>();
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
         
-        for(int i = 0; i < V; i++) list.add(new ArrayList<>());;
+        for(int i = 0; i < V; i++) adj.add(new ArrayList<>());
         
         for(int[] edge : edges){
             int u = edge[0];
             int v = edge[1];
             int wt = edge[2];
-            
-            list.get(u).add(new Pair(v,wt));
-            list.get(v).add(new Pair(u,wt));
+            adj.get(u).add(new Pair(v,wt));
+            adj.get(v).add(new Pair(u,wt));
         }
-        
-        PriorityQueue<Pair> pq = new PriorityQueue<>((x,y) -> x.distance-y.distance);
-        
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b)-> a.distance-b.distance);
+        pq.add(new Pair(src,0));
         int[] dist = new int[V];
-        
-        for(int i = 0; i < V; i++) dist[i] = (int)1e9;
+        Arrays.fill(dist,(int)1e9);
         dist[src] = 0;
-        pq.offer(new Pair(src,0));
-        
         while(!pq.isEmpty()){
             Pair p = pq.poll();
-            int nodes = p.node;
+            int node = p.vertex;
             int length = p.distance;
-            if(length > dist[nodes]) continue;
-            for(Pair neighbor : list.get(nodes)){
-                if(dist[nodes]+neighbor.distance < dist[neighbor.node]){
-                    dist[neighbor.node] = dist[nodes] + neighbor.distance;
-                    pq.offer(new Pair(neighbor.node, dist[neighbor.node]));
+            if(length > dist[node]) continue;
+            for(Pair neighbor : adj.get(node)){
+                if(dist[node] + neighbor.distance < dist[neighbor.vertex]){
+                    dist[neighbor.vertex] = dist[node] + neighbor.distance;
+                    pq.add(new Pair(neighbor.vertex,dist[neighbor.vertex]));
                 }
             }
         }
+        for(int i = 0; i < V; i++){
+            if(dist[i] == (int)1e9) dist[i] = -1;
+        }
+        
         return dist;
     }
 }
