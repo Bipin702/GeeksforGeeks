@@ -39,7 +39,7 @@ class Disjoint{
     }
 
 class Solution {
-    static class Pair implements Comparable<Pair>{
+    static class Pair{
         int src;
         int dest;
         int weight;
@@ -48,29 +48,28 @@ class Solution {
             this.src = src;
             this.dest = dest;
             this.weight = weight;
-            
-        }
-        
-        public int compareTo(Pair p2){
-            return this.weight - p2.weight;
         }
     }
+    
     static int kruskalsMST(int V, int[][] edges) {
         // code here
-        ArrayList<Pair> edgeList = new ArrayList<>();
+        ArrayList<Pair> adj = new ArrayList<>();
         
         for(int[] edge : edges){
             int u = edge[0];
             int v = edge[1];
             int wt = edge[2];
             
-            edgeList.add(new Pair(u,v,wt));
+            adj.add(new Pair(u,v,wt));
         }
-        Collections.sort(edgeList);
+        
+        Collections.sort(adj, (a,b) -> a.weight - b.weight);
         
         Disjoint dsu = new Disjoint(V);
         int sum = 0;
-        for(Pair edge : edgeList){
+        
+        
+        for(Pair edge : adj){
             int u = edge.src;
             int v = edge.dest;
             int wt = edge.weight;
