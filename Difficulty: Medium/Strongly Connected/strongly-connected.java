@@ -1,62 +1,65 @@
 class Solution {
-    // Function to find number of strongly connected components in the graph.
-    public int kosaraju(ArrayList<ArrayList<Integer>> adj) {
+    // Function to find number of strongly connected components in the graph
+    public int kosaraju(int V, int[][] edges) {
         // code here
-        int n = adj.size();
-        int[] vis = new int[n];
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        
+        for(int i = 0; i < V; i++) adj.add(new ArrayList<>());
+        
+        for(int[] row : edges){
+            int u = row[0];
+            int v = row[1];
+            
+            adj.get(u).add(v);
+        }
+        
+        int[] visited = new int[V];
+        
         Stack<Integer> st = new Stack<>();
         
-        // sort according to finish time
-        for(int i = 0; i < n; i++){
-            if(vis[i] == 0){
-                dfs1(i,vis,st,adj);
-            }
+        for(int i = 0; i < V; i++){
+            if(visited[i] == 0)
+            dfs(i,visited,adj,st);
         }
         
-        //Reverse the graph
-        ArrayList<ArrayList<Integer>> reverse = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> rev = new ArrayList<>();
+        for(int i = 0; i < V; i++) rev.add(new ArrayList<>());
         
-        for(int i = 0; i < n; i++) reverse.add(new ArrayList<>());
-        
-        for(int i = 0; i < n; i++){
-            vis[i] = 0;
-            
-            for(int neighbor : adj.get(i)){
-                reverse.get(neighbor).add(i);
-            }
+        for(int i = 0; i < V; i++){
+            visited[i] = 0;
+            for(int neighbor : adj.get(i))
+            rev.get(neighbor).add(i);
         }
         
-        //Do dfs in the graph
         int scc = 0;
         
         while(!st.isEmpty()){
             int node = st.pop();
-            
-            if(vis[node] == 0){
-                dfs(node,vis,reverse);
+        
+            if(visited[node] == 0){
                 scc++;
+                dfs2(visited,node,rev);
             }
         }
         return scc;
     }
     
-    public void dfs1(int node, int[] visited, Stack<Integer> st, ArrayList<ArrayList<Integer>> adj){
+    public void dfs(int node, int[] visited, ArrayList<ArrayList<Integer>> adj, Stack<Integer> st){
         visited[node] = 1;
         
-        for(Integer neighbor : adj.get(node)){
-            if(visited[neighbor] == 0){
-                dfs1(neighbor,visited,st,adj);
-            }
+        for(int neighbor : adj.get(node)){
+            if(visited[neighbor] == 0)
+            dfs(neighbor,visited,adj,st);
         }
         st.push(node);
     }
     
-    public void dfs(int node, int[] visited, ArrayList<ArrayList<Integer>> reverse){
+    public void dfs2(int[] visited, int node, ArrayList<ArrayList<Integer>> adj){
         visited[node] = 1;
         
-        for(Integer neighbor : reverse.get(node)){
+        for(int neighbor : adj.get(node)){
             if(visited[neighbor] == 0){
-                dfs(neighbor, visited, reverse);
+                dfs2(visited,neighbor,adj);
             }
         }
     }
